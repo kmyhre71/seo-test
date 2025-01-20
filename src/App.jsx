@@ -76,7 +76,7 @@ import React, { useState } from 'react';
           setStatus('Analyzing content...');
           const results = {
             analysis: Analysis.analyze(htmlContent),
-            keywords: KeywordHighlighting.highlight(htmlContent, ['keyword1', 'keyword2']),
+            keywords: KeywordHighlighting.highlight(htmlContent),
             metaTags: MetaTagInspection.inspect(htmlContent),
             links: LinkAnalysis.analyze(htmlContent),
             serpPreview: SERPPreview.preview(htmlContent),

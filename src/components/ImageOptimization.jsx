@@ -8,7 +8,13 @@ import React from 'react';
         <ul>
           {results.map((image, index) => (
             <li key={index}>
-              <b>Image {index + 1}:</b> Alt Text: {image.altText}, File Size: {image.fileSize}, Format: {image.format}
+              <b>Image {index + 1}:</b>
+              <ul>
+                <li><b>Alt Text:</b> {image.altText}</li>
+                <li><b>File Name:</b> {image.fileName}</li>
+                <li><b>Lazy Loading:</b> {image.lazyLoading}</li>
+                <li><b>File Size:</b> {image.fileSize}</li>
+              </ul>
             </li>
           ))}
         </ul>
@@ -24,9 +30,10 @@ import React from 'react';
       imgElements.forEach((img) => {
         const altText = img.getAttribute('alt') || 'No alt text';
         const src = img.getAttribute('src');
+        const fileName = src ? src.split('/').pop() : 'Unknown';
+        const lazyLoading = img.getAttribute('loading') === 'lazy' ? 'Yes' : 'No';
         const fileSize = 'Unknown';
-        const format = src ? src.split('.').pop() : 'Unknown';
-        images.push({ altText, fileSize, format });
+        images.push({ altText, fileName, lazyLoading, fileSize });
       });
       return images;
     };
