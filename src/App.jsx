@@ -34,19 +34,13 @@ import React, { useState } from 'react';
         }
       };
 
-      const fetchWithTimeout = async (url, timeout = 15000, retries = 5) => {
+      const fetchWithTimeout = async (url, retries = 5) => {
         let delay = 1000;
         for (let i = 0; i < retries; i++) {
           console.log(`Fetch attempt ${i + 1} started.`);
           try {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-
             const response = await axios.get(url, {
-              signal: controller.signal,
-              timeout: timeout,
             });
-            clearTimeout(id);
 
             if (response.status !== 200) {
               const message = `HTTP error! status: ${response.status}`;
@@ -57,11 +51,7 @@ import React, { useState } from 'react';
             return response.data;
           } catch (e) {
             console.log(`Fetch attempt ${i + 1} failed: ${e.message}`);
-            if (e.message.includes('aborted')) {
-              if (i === retries - 1) {
-                throw e;
-              }
-            } else if (i === retries - 1) {
+             if (i === retries - 1) {
               throw e;
             }
             await new Promise((resolve) => setTimeout(resolve, delay));
@@ -82,7 +72,7 @@ import React, { useState } from 'react';
           return;
         }
 
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const proxyUrl = 'https://thingproxy.freeboard.io/fetch/';
         const targetUrl = proxyUrl + url;
 
         try {
