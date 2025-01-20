@@ -1,0 +1,206 @@
+import React, { useState } from 'react';
+    import Analysis from './components/Analysis';
+    import KeywordHighlighting from './components/KeywordHighlighting';
+    import MetaTagInspection from './components/MetaTagInspection';
+    import LinkAnalysis from './components/LinkAnalysis';
+    import SERPPreview from './components/SERPPreview';
+    import HttpStatus from './components/HttpStatus';
+    import MobileFriendliness from './components/MobileFriendliness';
+    import ContentReadability from './components/ContentReadability';
+    import SchemaMarkupValidator from './components/SchemaMarkupValidator';
+    import ImageOptimization from './components/ImageOptimization';
+    import SocialMediaIntegration from './components/SocialMediaIntegration';
+    import CompetitorAnalysis from './components/CompetitorAnalysis';
+    import BacklinkChecker from './components/BacklinkChecker';
+    import CustomReports from './components/CustomReports';
+    import RealTimeAlerts from './components/RealTimeAlerts';
+    import KeywordResearch from './components/KeywordResearch';
+    import UserBehaviorTracking from './components/UserBehaviorTracking';
+
+    function App() {
+      const [url, setUrl] = useState('');
+      const [analysisResults, setAnalysisResults] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+      const [status, setStatus] = useState('');
+
+      const isValidUrl = (urlString) => {
+        try {
+          new URL(urlString);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      };
+
+      const fetchWithTimeout = async (url, timeout = 15000, retries = 5) => {
+        let delay = 1000;
+        for (let i = 0; i < retries; i++) {
+          try {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(id);
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.text();
+          } catch (e) {
+            if (e.name === 'AbortError') {
+              if (i === retries - 1) {
+                throw e;
+              }
+            } else if (i === retries - 1) {
+              throw e;
+            }
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            delay *= 2;
+          }
+        }
+      };
+
+      const handleAnalyze = async () => {
+        setLoading(true);
+        setError(null);
+        setStatus('Validating URL...');
+
+        if (!isValidUrl(url)) {
+          setError('Invalid URL');
+          setLoading(false);
+          setStatus('URL validation failed.');
+          return;
+        }
+
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const targetUrl = proxyUrl + url;
+
+        try {
+          setStatus('Fetching content...');
+          const htmlContent = await fetchWithTimeout(targetUrl);
+
+          setStatus('Analyzing content...');
+          const results = {
+            analysis: Analysis.analyze(htmlContent),
+            keywords: KeywordHighlighting.highlight(htmlContent, ['keyword1', 'keyword2']),
+            metaTags: MetaTagInspection.inspect(htmlContent),
+            links: LinkAnalysis.analyze(htmlContent),
+            serpPreview: SERPPreview.preview(htmlContent),
+            httpStatus: HttpStatus.check(htmlContent),
+            mobileFriendliness: MobileFriendliness.check(htmlContent),
+            readability: ContentReadability.analyze(htmlContent),
+            schema: SchemaMarkupValidator.validate(htmlContent),
+            images: ImageOptimization.check(htmlContent),
+            social: SocialMediaIntegration.analyze(htmlContent),
+            competitor: CompetitorAnalysis.analyze(htmlContent),
+            backlinks: BacklinkChecker.check(htmlContent),
+            reports: CustomReports.generate(htmlContent),
+            alerts: RealTimeAlerts.check(htmlContent),
+            keywordsResearch: KeywordResearch.research(htmlContent),
+            userBehavior: UserBehaviorTracking.track(htmlContent),
+          };
+          setAnalysisResults(results);
+          setStatus('Analysis complete.');
+        } catch (e) {
+          setError(e.message);
+          setAnalysisResults(null);
+          setStatus('Analysis failed.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="container">
+          <h1>On-Page SEO Analyzer</h1>
+          <input
+            type="url"
+            placeholder="Enter URL here..."
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            style={{ width: '80%', padding: '10px', marginBottom: '10px' }}
+          />
+          <button onClick={handleAnalyze} disabled={loading}>
+            {loading ? 'Analyzing...' : 'Analyze'}
+          </button>
+          {status && <p>Status: {status}</p>}
+          {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+
+          {analysisResults && (
+            <>
+              <div className="analysis-section">
+                <h2>Analysis</h2>
+                <Analysis results={analysisResults.analysis} />
+              </div>
+              <div className="analysis-section">
+                <h2>Keyword Highlighting</h2>
+                <KeywordHighlighting results={analysisResults.keywords} />
+              </div>
+              <div className="analysis-section">
+                <h2>Meta Tag Inspection</h2>
+                <MetaTagInspection results={analysisResults.metaTags} />
+              </div>
+              <div className="analysis-section">
+                <h2>Link Analysis</h2>
+                <LinkAnalysis results={analysisResults.links} />
+              </div>
+              <div className="analysis-section">
+                <h2>SERP Preview</h2>
+                <SERPPreview results={analysisResults.serpPreview} />
+              </div>
+              <div className="analysis-section">
+                <h2>HTTP Status</h2>
+                <HttpStatus results={analysisResults.httpStatus} />
+              </div>
+              <div className="analysis-section">
+                <h2>Mobile Friendliness</h2>
+                <MobileFriendliness results={analysisResults.mobileFriendliness} />
+              </div>
+              <div className="analysis-section">
+                <h2>Content Readability</h2>
+                <ContentReadability results={analysisResults.readability} />
+              </div>
+              <div className="analysis-section">
+                <h2>Schema Markup Validator</h2>
+                <SchemaMarkupValidator results={analysisResults.schema} />
+              </div>
+              <div className="analysis-section">
+                <h2>Image Optimization</h2>
+                <ImageOptimization results={analysisResults.images} />
+              </div>
+              <div className="analysis-section">
+                <h2>Social Media Integration</h2>
+                <SocialMediaIntegration results={analysisResults.social} />
+              </div>
+              <div className="analysis-section">
+                <h2>Competitor Analysis</h2>
+                <CompetitorAnalysis results={analysisResults.competitor} />
+              </div>
+              <div className="analysis-section">
+                <h2>Backlink Checker</h2>
+                <BacklinkChecker results={analysisResults.backlinks} />
+              </div>
+              <div className="analysis-section">
+                <h2>Custom Reports</h2>
+                <CustomReports results={analysisResults.reports} />
+              </div>
+              <div className="analysis-section">
+                <h2>Real-time Alerts</h2>
+                <RealTimeAlerts results={analysisResults.alerts} />
+              </div>
+              <div className="analysis-section">
+                <h2>Keyword Research</h2>
+                <KeywordResearch results={analysisResults.keywordsResearch} />
+              </div>
+              <div className="analysis-section">
+                <h2>User Behavior Tracking</h2>
+                <UserBehaviorTracking results={analysisResults.userBehavior} />
+              </div>
+            </>
+          )}
+        </div>
+      );
+    }
+
+    export default App;

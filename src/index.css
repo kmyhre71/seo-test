@@ -1,0 +1,33 @@
+body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .analysis-section {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .analysis-section h2 {
+      margin-top: 0;
+    }
+
+    .analysis-section ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .analysis-section li {
+      margin-bottom: 5px;
+    }
+
+    .keyword-highlight {
+      background-color: yellow;
+    }
