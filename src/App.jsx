@@ -16,6 +16,7 @@ import React, { useState } from 'react';
     import RealTimeAlerts from './components/RealTimeAlerts';
     import KeywordResearch from './components/KeywordResearch';
     import UserBehaviorTracking from './components/UserBehaviorTracking';
+    import axios from 'axios';
 
     function App() {
       const [url, setUrl] = useState('');
@@ -41,20 +42,22 @@ import React, { useState } from 'react';
             const controller = new AbortController();
             const id = setTimeout(() => controller.abort(), timeout);
 
-            const response = await fetch(url, { signal: controller.signal });
+            const response = await axios.get(url, {
+              signal: controller.signal,
+              timeout: timeout,
+            });
             clearTimeout(id);
 
-            if (!response.ok) {
+            if (response.status !== 200) {
               const message = `HTTP error! status: ${response.status}`;
               console.log(`Fetch attempt ${i + 1} failed: ${message}`);
               throw new Error(message);
             }
-            const text = await response.text();
             console.log(`Fetch attempt ${i + 1} successful.`);
-            return text;
+            return response.data;
           } catch (e) {
             console.log(`Fetch attempt ${i + 1} failed: ${e.message}`);
-            if (e.name === 'AbortError') {
+            if (e.message.includes('aborted')) {
               if (i === retries - 1) {
                 throw e;
               }
