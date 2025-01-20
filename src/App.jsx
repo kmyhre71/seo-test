@@ -36,6 +36,7 @@ import React, { useState } from 'react';
       const fetchWithTimeout = async (url, timeout = 15000, retries = 5) => {
         let delay = 1000;
         for (let i = 0; i < retries; i++) {
+          console.log(`Fetch attempt ${i + 1} started.`);
           try {
             const controller = new AbortController();
             const id = setTimeout(() => controller.abort(), timeout);
@@ -44,10 +45,15 @@ import React, { useState } from 'react';
             clearTimeout(id);
 
             if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+              const message = `HTTP error! status: ${response.status}`;
+              console.log(`Fetch attempt ${i + 1} failed: ${message}`);
+              throw new Error(message);
             }
-            return await response.text();
+            const text = await response.text();
+            console.log(`Fetch attempt ${i + 1} successful.`);
+            return text;
           } catch (e) {
+            console.log(`Fetch attempt ${i + 1} failed: ${e.message}`);
             if (e.name === 'AbortError') {
               if (i === retries - 1) {
                 throw e;
