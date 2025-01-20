@@ -10,11 +10,6 @@ import React, { useState } from 'react';
     import SchemaMarkupValidator from './components/SchemaMarkupValidator';
     import ImageOptimization from './components/ImageOptimization';
     import SocialMediaIntegration from './components/SocialMediaIntegration';
-    import CompetitorAnalysis from './components/CompetitorAnalysis';
-    import CustomReports from './components/CustomReports';
-    import RealTimeAlerts from './components/RealTimeAlerts';
-    import KeywordResearch from './components/KeywordResearch';
-    import UserBehaviorTracking from './components/UserBehaviorTracking';
     import axios from 'axios';
 
     function App() {
@@ -91,11 +86,6 @@ import React, { useState } from 'react';
             schema: SchemaMarkupValidator.validate(htmlContent),
             images: ImageOptimization.check(htmlContent),
             social: SocialMediaIntegration.analyze(htmlContent),
-            competitor: CompetitorAnalysis.analyze(htmlContent, ['keyword1', 'keyword2'], 'description'),
-            reports: CustomReports.generate(htmlContent),
-            alerts: RealTimeAlerts.check(htmlContent),
-            keywordsResearch: KeywordResearch.research(htmlContent),
-            userBehavior: UserBehaviorTracking.track(htmlContent),
           };
           setAnalysisResults(results);
           setStatus('Analysis complete.');
@@ -169,26 +159,6 @@ import React, { useState } from 'react';
               <div className="analysis-section">
                 <h2>Social Media Integration</h2>
                 <SocialMediaIntegration results={analysisResults.social} />
-              </div>
-              <div className="analysis-section">
-                <h2>Competitor Analysis</h2>
-                <CompetitorAnalysis results={analysisResults.competitor} />
-              </div>
-              <div className="analysis-section">
-                <h2>Custom Reports</h2>
-                <CustomReports results={analysisResults.reports} />
-              </div>
-              <div className="analysis-section">
-                <h2>Real-time Alerts</h2>
-                <RealTimeAlerts results={analysisResults.alerts} />
-              </div>
-              <div className="analysis-section">
-                <h2>Keyword Research</h2>
-                <KeywordResearch results={analysisResults.keywordsResearch} />
-              </div>
-              <div className="analysis-section">
-                <h2>User Behavior Tracking</h2>
-                <UserBehaviorTracking results={analysisResults.userBehavior} />
               </div>
             </>
           )}
