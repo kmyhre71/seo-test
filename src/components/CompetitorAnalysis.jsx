@@ -15,11 +15,32 @@ import React from 'react';
       );
     };
 
-    CompetitorAnalysis.analyze = () => {
-      return [
-        { competitor: 'Competitor A', metric: 'Good SEO' },
-        { competitor: 'Competitor B', metric: 'Average SEO' },
-      ];
+    CompetitorAnalysis.analyze = (content, competitorKeywords, competitorDescription) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(content, 'text/html');
+      const metaDescription =
+        doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+      const textContent = doc.body?.textContent || '';
+      const pageKeywords = textContent.toLowerCase().split(/\s+/);
+
+      const competitorA = {
+        competitor: 'Competitor A',
+        metric: 'No Match',
+      };
+      const competitorB = {
+        competitor: 'Competitor B',
+        metric: 'No Match',
+      };
+
+      if (competitorKeywords.some(keyword => pageKeywords.includes(keyword.toLowerCase()))) {
+        competitorA.metric = 'Keyword Match';
+      }
+
+      if (metaDescription.toLowerCase().includes(competitorDescription)) {
+        competitorB.metric = 'Description Match';
+      }
+
+      return [competitorA, competitorB];
     };
 
     export default CompetitorAnalysis;

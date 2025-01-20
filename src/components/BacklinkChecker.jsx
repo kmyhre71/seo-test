@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+    import axios from 'axios';
 
     const BacklinkChecker = ({ results }) => {
       if (!results) {
@@ -16,11 +17,21 @@ import React from 'react';
       );
     };
 
-    BacklinkChecker.check = () => {
-      return {
-        totalBacklinks: 100,
-        qualityBacklinks: 70,
-      };
+    BacklinkChecker.check = async (url) => {
+      try {
+        const response = await axios.get(
+          `https://api.example.com/backlinks?url=${encodeURIComponent(url)}`,
+        );
+        if (response.status === 200) {
+          return response.data;
+        } else {
+          console.error('Failed to fetch backlinks:', response.status);
+          return { totalBacklinks: 'N/A', qualityBacklinks: 'N/A' };
+        }
+      } catch (error) {
+        console.error('Error fetching backlinks:', error);
+        return { totalBacklinks: 'N/A', qualityBacklinks: 'N/A' };
+      }
     };
 
     export default BacklinkChecker;

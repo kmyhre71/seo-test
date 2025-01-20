@@ -11,7 +11,6 @@ import React, { useState } from 'react';
     import ImageOptimization from './components/ImageOptimization';
     import SocialMediaIntegration from './components/SocialMediaIntegration';
     import CompetitorAnalysis from './components/CompetitorAnalysis';
-    import BacklinkChecker from './components/BacklinkChecker';
     import CustomReports from './components/CustomReports';
     import RealTimeAlerts from './components/RealTimeAlerts';
     import KeywordResearch from './components/KeywordResearch';
@@ -92,8 +91,7 @@ import React, { useState } from 'react';
             schema: SchemaMarkupValidator.validate(htmlContent),
             images: ImageOptimization.check(htmlContent),
             social: SocialMediaIntegration.analyze(htmlContent),
-            competitor: CompetitorAnalysis.analyze(htmlContent),
-            backlinks: BacklinkChecker.check(htmlContent),
+            competitor: CompetitorAnalysis.analyze(htmlContent, ['keyword1', 'keyword2'], 'description'),
             reports: CustomReports.generate(htmlContent),
             alerts: RealTimeAlerts.check(htmlContent),
             keywordsResearch: KeywordResearch.research(htmlContent),
@@ -175,10 +173,6 @@ import React, { useState } from 'react';
               <div className="analysis-section">
                 <h2>Competitor Analysis</h2>
                 <CompetitorAnalysis results={analysisResults.competitor} />
-              </div>
-              <div className="analysis-section">
-                <h2>Backlink Checker</h2>
-                <BacklinkChecker results={analysisResults.backlinks} />
               </div>
               <div className="analysis-section">
                 <h2>Custom Reports</h2>
